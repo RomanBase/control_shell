@@ -1,0 +1,21 @@
+name: control_cli
+description: "A new Flutter project."
+version: 0.0.1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  #   path: ^1.8.0
+
+  # https://pub.dev/packages/process_run
+  process_run: 0.13.2
+
+  # https://pub.dev/packages/source_gen
+  source_gen: 1.4.0
+
+  # https://pub.dev/packages/build
+  build: 2.4.1
+
+  # https://pub.dev/packages/code_builder
+  code_builder: 4.7.0

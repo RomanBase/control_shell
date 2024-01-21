@@ -79,13 +79,25 @@ Future<List<File>> listFiles(Directory parent, [bool recursive = false]) async {
   return list;
 }
 
-String buildExport(List<File> files, [Directory? relative]) {
+String buildExport(List<File> files, [Directory? relative, String? library, String suffix = '_provider']) {
   final buffer = StringBuffer();
   final offset = (relative?.path.length ?? -1) + 1;
+
+  if (library != null) {
+    buffer.writeln('library $library;');
+    buffer.writeln();
+    buffer.writeln('import \'${library}.dart\';');
+    buffer.writeln();
+  }
 
   files.forEach((element) {
     buffer.writeln('export \'${element.relativePath(offset)}\';');
   });
+
+  if (library != null) {
+    buffer.writeln();
+    buffer.writeln('part \'${library}${suffix}.dart\';');
+  }
 
   return buffer.toString();
 }

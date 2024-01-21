@@ -31,19 +31,32 @@ Future<void> buildPackages({String? project, String name = 'package', List<Strin
   print('-------------- ${pck.path} [$count]');
 }
 
-Future<File?> buildLib({Directory? directory, String? name}) async {
-  File? output;
+Future<List<File>> buildLib({Directory? directory, String? name, bool provider = false, String suffix = '_provider'}) async {
+  final list = <File>[];
+
   directory ??= projectLib();
   name ??= directory.name;
 
   final files = await listFiles(directory, true);
-  files.removeWhere((element) => element.name == name);
-  final export = buildExport(files, directory);
+  files.removeWhere((element) => element.name == name || element.name == '$name$suffix');
+  final export = buildExport(files, directory, provider ? name : null, suffix);
 
   final exportFile = File(path(directory.path, [name], '.dart'));
 
+  if (provider) {
+    final providerFile = File(path(directory.path, [name], '$suffix.dart'));
+
+    if (!await providerFile.exists()) {
+      list.add(providerFile);
+
+      await providerFile.create(recursive: true);
+      await providerFile.writeAsString('part of $name;', flush: true);
+    }
+  }
+
   if (!exportFile.existsSync()) {
-    output = exportFile;
+    list.add(exportFile);
+
     await exportFile.create(recursive: true);
   }
 
@@ -51,10 +64,10 @@ Future<File?> buildLib({Directory? directory, String? name}) async {
 
   print('build lib module: ${exportFile.path}');
 
-  return output;
+  return list;
 }
 
-Future<List<File>> buildModuleLibs({required Directory directory, List<String> exclude = const []}) async {
+Future<List<File>> buildModuleLibs({required Directory directory, List<String> exclude = const [], bool provider = false, String suffix = '_provider'}) async {
   final list = <File>[];
 
   final dirs = await listDirectories(directory);
@@ -64,17 +77,17 @@ Future<List<File>> buildModuleLibs({required Directory directory, List<String> e
       continue;
     }
 
-    final file = await buildLib(directory: dir);
+    final files = await buildLib(directory: dir, provider: provider, suffix: suffix);
 
-    if (file != null) {
-      list.add(file);
+    if (files.isNotEmpty) {
+      list.addAll(files);
     }
   }
 
   return list;
 }
 
-Future<List<File>> buildProjectLibs({String? project, List<String> exclude = const []}) async {
+Future<List<File>> buildProjectLibs({String? project, List<String> exclude = const [], bool provider = false, String suffix = '_provider'}) async {
   final list = <File>[];
 
   final root = projectLib(project);
@@ -85,10 +98,10 @@ Future<List<File>> buildProjectLibs({String? project, List<String> exclude = con
       continue;
     }
 
-    final file = await buildLib(directory: dir);
+    final files = await buildLib(directory: dir, provider: provider, suffix: suffix);
 
-    if (file != null) {
-      list.add(file);
+    if (files.isNotEmpty) {
+      list.addAll(files);
     }
   }
 

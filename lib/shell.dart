@@ -11,7 +11,7 @@ class ControlShell {
 
   final List<String> modules;
 
-  ControlShell._(this._shell, this.modules);
+  const ControlShell._(this._shell, this.modules);
 
   ControlShell module(String name) => ControlShell._(moduleShell(name), []);
 
@@ -47,7 +47,7 @@ class ControlShell {
     print('CI $parent --- END');
   }
 
-  void runAsync(dynamic parent, Future<void> Function() action) async {
+  Future<void> runAsync(dynamic parent, Future<void> Function() action) async {
     final timestamp = DateTime.now();
     print('CI $parent --- START');
     await action();

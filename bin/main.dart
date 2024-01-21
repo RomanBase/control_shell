@@ -1,7 +1,5 @@
-import 'package:control_cli/shell.dart' as sh;
+import 'package:control_shell/shell.dart' as sh;
 
 final ci = sh.root();
 
-void main(List<String> arguments) {
-  print(arguments);
-}
+void main(List<String> arguments) {}

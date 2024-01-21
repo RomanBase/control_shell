@@ -11,6 +11,16 @@ String path(String? root, List<String> path, [String? extension]) {
   return onPlatform(win: () => output, mac: () => output.replaceAll('/', slash));
 }
 
+Directory projectDir([String? name]) {
+  final root = File('').absolute.parent.path;
+
+  if (name == null || name.isEmpty) {
+    return Directory(path(root, []));
+  }
+
+  return Directory(path(root, [name]));
+}
+
 Directory projectLib([String? name]) {
   final root = File('').absolute.parent.path;
 
@@ -19,6 +29,18 @@ Directory projectLib([String? name]) {
   }
 
   return Directory(path(root, [name, 'lib']));
+}
+
+Directory libDirectory(String name) {
+  final root = projectLib().path;
+
+  return Directory(path(root, [name]));
+}
+
+File projectFile(String name) {
+  final root = File('').absolute.parent.path;
+
+  return File(path(root, [name]));
 }
 
 Future<List<Directory>> listDirectories(Directory parent) async {
@@ -62,7 +84,18 @@ String buildExport(List<File> files, [Directory? relative]) {
   final offset = (relative?.path.length ?? -1) + 1;
 
   files.forEach((element) {
-    buffer.writeln('export \'/${element.path.substring(offset).replaceAll('\\', '\/')}\';');
+    buffer.writeln('export \'${element.relativePath(offset)}\';');
+  });
+
+  return buffer.toString();
+}
+
+String buildAssetList(List<File> files, [Directory? relative]) {
+  final buffer = StringBuffer();
+  final offset = (relative?.path.length ?? -1) + 1;
+
+  files.forEach((element) {
+    buffer.writeln('  final ${element.name} = \'${element.relativePath(offset)}\';');
   });
 
   return buffer.toString();
@@ -70,4 +103,10 @@ String buildExport(List<File> files, [Directory? relative]) {
 
 extension DirectoryExtension on Directory {
   String get name => this.path.substring(this.path.lastIndexOf(slash) + 1);
+}
+
+extension FileExtension on File {
+  String get name => this.path.substring(this.path.lastIndexOf(slash) + 1).split('.').first;
+
+  String relativePath(int offset) => this.path.substring(offset).replaceAll('\\', '\/');
 }

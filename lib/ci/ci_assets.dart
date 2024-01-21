@@ -52,3 +52,14 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
 
   return exportFile;
 }
+
+String buildAssetList(List<File> files, [Directory? relative]) {
+  final buffer = StringBuffer();
+  final offset = (relative?.path.length ?? -1) + 1;
+
+  files.forEach((element) {
+    buffer.writeln('  final ${element.name} = \'${element.relativePath(offset)}\';');
+  });
+
+  return buffer.toString();
+}

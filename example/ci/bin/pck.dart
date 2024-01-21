@@ -11,7 +11,7 @@ const _modular = ['modules', 'platforms'];
 
 void main(List<String> args) async {
   await ci.runAsync(
-    'directory libs',
+    'generate export files',
     (shell) => pck.buildProjectLibs(
       exclude: [
         ..._app,
@@ -24,7 +24,7 @@ void main(List<String> args) async {
 
   for (final lib in _libs) {
     await ci.runAsync(
-      '$lib lib',
+      'generate $lib provider files',
       (shell) => pck
           .buildLib(
             directory: libDirectory(lib),
@@ -36,7 +36,7 @@ void main(List<String> args) async {
 
   for (final module in _modular) {
     await ci.runAsync(
-      '$module libs',
+      'generate $module provider files',
       (shell) => pck
           .buildModuleLibs(
             directory: libDirectory(module),
@@ -48,13 +48,13 @@ void main(List<String> args) async {
 }
 
 void buildPck(Directory directory) {
-  Directory dir = _parent(directory, 'lib');
+  Directory dir = parentDir(directory, 'lib');
 
   print(dir.name);
 
   if (_modular.contains(dir.name)) {
     if (!_modular.contains(directory.name)) {
-      dir = _parent(directory, dir.name);
+      dir = parentDir(directory, dir.name);
     } else {
       return;
     }
@@ -65,7 +65,7 @@ void buildPck(Directory directory) {
   }
 
   ci.runAsync(
-    '${dir.name} lib',
+    '${dir.name} pck',
     (shell) => pck
         .buildLib(
           directory: dir,
@@ -73,16 +73,4 @@ void buildPck(Directory directory) {
         )
         .then((value) => value.forEach((element) => element.addToGit(shell))),
   );
-}
-
-Directory _parent(Directory dir, String name) {
-  if (dir.name == name) {
-    return dir;
-  }
-
-  if (dir.parent.name == name) {
-    return dir;
-  }
-
-  return _parent(dir.parent, name);
 }

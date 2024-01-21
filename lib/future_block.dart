@@ -1,5 +1,6 @@
 import 'dart:async';
 
+/// Copy from [flutter_control]
 /// Works similarly to [Future.delayed(duration)], but completion callback can be postponed.
 /// Can be re-triggered multiple times - only last call will be handled.
 class FutureBlock {

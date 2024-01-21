@@ -79,38 +79,16 @@ Future<List<File>> listFiles(Directory parent, [bool recursive = false]) async {
   return list;
 }
 
-String buildExport(List<File> files, [Directory? relative, String? library, String suffix = '_provider']) {
-  final buffer = StringBuffer();
-  final offset = (relative?.path.length ?? -1) + 1;
-
-  if (library != null) {
-    buffer.writeln('library $library;');
-    buffer.writeln();
-    buffer.writeln('import \'${library}.dart\';');
-    buffer.writeln();
+Directory parentDir(Directory dir, String name) {
+  if (dir.name == name) {
+    return dir;
   }
 
-  files.forEach((element) {
-    buffer.writeln('export \'${element.relativePath(offset)}\';');
-  });
-
-  if (library != null) {
-    buffer.writeln();
-    buffer.writeln('part \'${library}${suffix}.dart\';');
+  if (dir.parent.name == name) {
+    return dir;
   }
 
-  return buffer.toString();
-}
-
-String buildAssetList(List<File> files, [Directory? relative]) {
-  final buffer = StringBuffer();
-  final offset = (relative?.path.length ?? -1) + 1;
-
-  files.forEach((element) {
-    buffer.writeln('  final ${element.name} = \'${element.relativePath(offset)}\';');
-  });
-
-  return buffer.toString();
+  return parentDir(dir.parent, name);
 }
 
 extension DirectoryExtension on Directory {

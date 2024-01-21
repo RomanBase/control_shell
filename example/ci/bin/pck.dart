@@ -50,9 +50,11 @@ void main(List<String> args) async {
 void buildPck(Directory directory) {
   Directory dir = _parent(directory, 'lib');
 
+  print(dir.name);
+
   if (_modular.contains(dir.name)) {
     if (!_modular.contains(directory.name)) {
-      dir = _parent(directory, directory.name);
+      dir = _parent(directory, dir.name);
     } else {
       return;
     }
@@ -63,11 +65,11 @@ void buildPck(Directory directory) {
   }
 
   ci.runAsync(
-    'lib',
+    '${dir.name} lib',
     (shell) => pck
         .buildLib(
           directory: dir,
-          provider: true,
+          provider: _libs.contains(dir.name) || _modular.contains(dir.name),
         )
         .then((value) => value.forEach((element) => element.addToGit(shell))),
   );

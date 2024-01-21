@@ -49,7 +49,7 @@ void main(List<String> args) async {
 
   final watcher = BinWatcher._();
 
-  projectDir('assets').watch(events: FileSystemEvent.create | FileSystemEvent.delete, recursive: true).listen((event) {
+  projectDir('assets').watch(recursive: true).listen((event) {
     if (!BinWatcher.active) {
       return;
     }
@@ -74,7 +74,7 @@ void main(List<String> args) async {
       return;
     }
 
-    if (File(event.path).name == File(event.path).parent.name) {
+    if (File(event.path).name.startsWith(File(event.path).parent.name)) {
       return;
     }
 

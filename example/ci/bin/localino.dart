@@ -6,8 +6,8 @@ void main(List<String> args) async {
     'localization',
     (shell) => localino.fetchLocalizations(
       shell,
-      space: 'mafra',
-      project: 'impuls',
+      space: '...',
+      project: '...',
       access: '9WCDAbyBIhXqH0DwP9lZkAtmxEG2',
     ),
   );

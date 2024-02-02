@@ -1,1 +1,1 @@
-part of module_b;
+import 'module_b.dart';

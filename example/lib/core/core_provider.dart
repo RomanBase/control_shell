@@ -1,1 +1,1 @@
-part of core;
+import 'core.dart';

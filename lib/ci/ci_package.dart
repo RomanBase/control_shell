@@ -50,7 +50,7 @@ Future<List<File>> buildLib({Directory? directory, String? name, bool provider =
       list.add(providerFile);
 
       await providerFile.create(recursive: true);
-      await providerFile.writeAsString('part of $name;', flush: true);
+      await providerFile.writeAsString('import \'$name.dart\';', flush: true);
     }
   }
 
@@ -113,20 +113,12 @@ String buildExport(List<File> files, [Directory? relative, String? library, Stri
   final offset = (relative?.path.length ?? -1) + 1;
 
   if (library != null) {
-    buffer.writeln('library $library;');
-    buffer.writeln();
-    buffer.writeln('import \'${library}.dart\';');
-    buffer.writeln();
+    buffer.writeln('export \'$library$suffix.dart\';');
   }
 
   files.forEach((element) {
     buffer.writeln('export \'${element.relativePath(offset)}\';');
   });
-
-  if (library != null) {
-    buffer.writeln();
-    buffer.writeln('part \'${library}${suffix}.dart\';');
-  }
 
   return buffer.toString();
 }

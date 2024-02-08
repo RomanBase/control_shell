@@ -61,6 +61,7 @@ Future<File> buildResourceProvider({String? dir, String name = 'localize', Strin
   export.writeln('import \'package:localino/localino.dart\';');
   export.writeln();
   export.writeln('//Generated file: ${DateTime.now()}');
+  export.writeln('//Localino: https://localino.app/#/project/${localino['space']}/${localino['project']}');
 
   export.writeln('class $classKeyName {');
   export.writeln('  $classKeyName._();');

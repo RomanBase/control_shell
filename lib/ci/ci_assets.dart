@@ -57,9 +57,16 @@ String buildAssetList(List<File> files, [Directory? relative]) {
   final buffer = StringBuffer();
   final offset = (relative?.path.length ?? -1) + 1;
 
-  files.forEach((element) {
-    buffer.writeln('  final ${element.name} = \'${element.relativePath(offset)}\';');
-  });
+  final nameSet = <String>{};
+  for (final element in files) {
+    {
+      if(nameSet.contains(element.name)){
+        continue;
+      }
+      buffer.writeln('  final ${element.name} = \'${element.relativePath(offset)}\';');
+      nameSet.add(element.name);
+    }
+  }
 
   return buffer.toString();
 }

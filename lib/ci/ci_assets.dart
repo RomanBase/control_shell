@@ -29,10 +29,11 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
       assetsExport.writeln('class _${dir.name} {');
       assetsExport.writeln('  const _${dir.name}._();');
       assetsExport.writeln();
-      assetsExport.writeln('  String operator[](String value) => \'${folder}/${dir.name}/\${value}\';');
+      assetsExport.writeln('  String operator [](String value) => \'${folder}/${dir.name}/\${value}\';');
       assetsExport.writeln();
-      assetsExport.writeln(assets);
-      assetsExport.write('}');
+      assetsExport.write(assets);
+      assetsExport.writeln('}');
+      assetsExport.writeln();
 
       export.writeln('  static const ${dir.name} = _${dir.name}._();');
     }
@@ -42,7 +43,7 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
 
   export.writeln('}');
   export.writeln();
-  export.writeln(assetsExport);
+  export.write(assetsExport);
 
   final exportFile = File(path(res.path, [name], '.dart'));
   await exportFile.create(recursive: true);

@@ -81,6 +81,8 @@ Future<File> buildResourceProvider({String? dir, String name = 'localize', Strin
   export.writeln();
   export.writeln('  static Localino get _instance => LocalinoProvider.instance;');
   export.writeln();
+  export.writeln('  static String i(String key) => _instance.localize(key);');
+  export.writeln();
 
   for (final item in data.entries) {
     if (item.value is String) {

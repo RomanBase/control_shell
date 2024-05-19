@@ -22,7 +22,7 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
     }
 
     final files = await listFiles(dir, true);
-    final assets = buildAssetList(files, assetRoot.parent);
+    final assets = buildAssetList(files, dir, assetRoot.parent);
 
     if (assets.isNotEmpty) {
       count++;
@@ -54,13 +54,34 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
   return exportFile;
 }
 
-String buildAssetList(List<File> files, [Directory? relative]) {
+String buildAssetList(List<File> files, Directory parent, [Directory? relative]) {
   final buffer = StringBuffer();
   final offset = (relative?.path.length ?? -1) + 1;
 
   files.forEach((element) {
-    buffer.writeln('  final ${element.name} = \'${element.relativePath(offset)}\';');
+    final relativePath = element.relativePath(offset);
+    final file = element.path.substring(parent.path.length + 1);
+    String prefix = '';
+
+    if (file.contains(slash)) {
+      final split = file.split(slash)..removeLast();
+      prefix = '${split.join('_')}_';
+    }
+
+    buffer.writeln('  final $prefix${propertyName(element.name)} = \'${relativePath}\';');
   });
 
   return buffer.toString();
+}
+
+String propertyName(String value) {
+  if (value.isNumeric) {
+    return 'n_${value}';
+  }
+
+  if (value.isKeyword) {
+    return '${value}_k';
+  }
+
+  return value;
 }

@@ -21,7 +21,7 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
       continue;
     }
 
-    final files = await listFiles(dir, true);
+    final files = await listFiles(dir, recursive: true);
     final assets = buildAssetList(files, dir, assetRoot.parent);
 
     if (assets.isNotEmpty) {

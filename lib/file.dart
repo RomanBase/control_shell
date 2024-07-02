@@ -60,12 +60,12 @@ Future<List<Directory>> listDirectories(Directory parent) async {
   return list;
 }
 
-Future<List<File>> listFiles(Directory parent, [bool recursive = false]) async {
+Future<List<File>> listFiles(Directory parent, {bool recursive = false, List<String> exclude = const []}) async {
   final completer = Completer();
   final list = <File>[];
 
   parent.list(recursive: recursive).listen((event) {
-    if (event is File) {
+    if (event is File && !exclude.any((value) => RegExp(value).hasMatch(event.path))) {
       list.add(event);
     }
   }, onDone: () {

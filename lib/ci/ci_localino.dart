@@ -94,7 +94,7 @@ Future<File> buildResourceProvider({String? dir, String name = 'localize', Strin
         export.writeln('  static String ${item.key}({${args.map((e) => 'dynamic $e').join(', ')}}) => _instance.localizeFormat(${classKeyName}.${item.key}, {${args.map((e) => '\'$e\': $e').join(', ')}});');
       }
     } else if (item.value is Map) {
-      if ((item.value as Map).keys.every((element) => int.tryParse('$element') != null)) {
+      if ((item.value as Map).keys.every((element) => element == 'other' || int.tryParse('$element') != null)) {
         final args = _getArgs(item.value);
         final argsProperty = args.isEmpty ? '' : ', {${args.map((e) => 'dynamic $e').join(', ')}}';
         final argsValues = args.isEmpty ? '' : ', {${args.map((e) => '\'$e\': $e').join(', ')}}';

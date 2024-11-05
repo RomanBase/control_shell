@@ -25,13 +25,18 @@ void main(List<String> args) async {
   for (final lib in _libs) {
     await ci.runAsync(
       'generate $lib provider files',
-      (shell) => pck
-          .buildLib(
-            directory: libDirectory(lib),
-            provider: true,
-            suffix: '_provider',
-          )
-          .then((value) => git.addFiles(shell, value)),
+      (shell) => pck.buildLib(
+        directory: libDirectory(lib),
+        provider: true,
+        suffix: '_provider',
+        exclude: [
+          ...[
+            'ignore_test',
+            '.{1,}\.glsl',
+            'not',
+          ],
+        ],
+      ).then((value) => git.addFiles(shell, value)),
     );
   }
 

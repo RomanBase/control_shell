@@ -65,7 +65,7 @@ Future<List<File>> listFiles(Directory parent, {bool recursive = false, List<Str
   final list = <File>[];
 
   parent.list(recursive: recursive).listen((event) {
-    if (event is File && !exclude.any((value) => RegExp(value).hasMatch(event.path))) {
+    if (event is File && !exclude.any((value) => event.name == value || _hasMatch(value, event.path))) {
       list.add(event);
     }
   }, onDone: () {
@@ -100,3 +100,7 @@ extension FileExtension on File {
 
   String relativePath(int offset) => this.path.substring(offset).replaceAll('\\', '\/');
 }
+
+bool _hasMatch(String regex, String value) => _isRegex(regex) && RegExp(regex).hasMatch(value);
+
+bool _isRegex(String value) => ['^', '*', '|', '{', '}', '[', ']', '<', '>', '+', '-', '=', '\$', '?', '!'].any((c) => value.contains(c));

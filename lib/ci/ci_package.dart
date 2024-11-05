@@ -28,10 +28,11 @@ Future<void> buildPackages({String? project, String name = 'package', List<Strin
 
     print('build package: ${exportFile.path}');
   }
+
   print('-------------- ${pck.path} [$count]');
 }
 
-Future<List<File>> buildLib({Directory? directory, String? name, bool provider = false, List<String> exclude = const [], String suffix = '_provider'}) async {
+Future<List<File>> buildLib({Directory? directory, String? name, bool provider = false, List<String> exclude = const [], String suffix = '_module'}) async {
   final list = <File>[];
 
   directory ??= projectLib();
@@ -39,7 +40,7 @@ Future<List<File>> buildLib({Directory? directory, String? name, bool provider =
 
   final files = await listFiles(directory, recursive: true, exclude: exclude);
   files.removeWhere((element) => element.name == name || element.name == '$name$suffix');
-  final export = buildExport(files, directory, provider ? name : null, suffix);
+  final export = buildExport(files, directory, provider ? '$name$suffix' : null);
 
   final exportFile = File(path(directory.path, [name], '.dart'));
 
@@ -67,7 +68,7 @@ Future<List<File>> buildLib({Directory? directory, String? name, bool provider =
   return list;
 }
 
-Future<List<File>> buildModuleLibs({required Directory directory, List<String> exclude = const [], bool provider = false, String suffix = '_provider'}) async {
+Future<List<File>> buildModuleLibs({required Directory directory, List<String> exclude = const [], bool provider = false, String suffix = '_module'}) async {
   final list = <File>[];
 
   final dirs = await listDirectories(directory);
@@ -92,38 +93,18 @@ Future<List<File>> buildModuleLibs({required Directory directory, List<String> e
   return list;
 }
 
-Future<List<File>> buildProjectLibs({String? project, List<String> exclude = const [], bool provider = false, String suffix = '_provider'}) async {
-  final list = <File>[];
-
+Future<List<File>> buildProjectLibs({String? project, List<String> exclude = const [], bool provider = false, String suffix = '_module'}) async {
   final root = projectLib(project);
-  final dirs = await listDirectories(root);
 
-  for (final dir in dirs) {
-    if (exclude.contains(dir.name)) {
-      continue;
-    }
-
-    final files = await buildLib(
-      directory: dir,
-      provider: provider,
-      suffix: suffix,
-      exclude: exclude,
-    );
-
-    if (files.isNotEmpty) {
-      list.addAll(files);
-    }
-  }
-
-  return list;
+  return buildModuleLibs(directory: root, exclude: exclude, provider: provider, suffix: suffix);
 }
 
-String buildExport(List<File> files, [Directory? relative, String? library, String suffix = '_provider']) {
+String buildExport(List<File> files, [Directory? relative, String? library]) {
   final buffer = StringBuffer();
   final offset = (relative?.path.length ?? -1) + 1;
 
   if (library != null) {
-    buffer.writeln('export \'$library$suffix.dart\';');
+    buffer.writeln('export \'$library.dart\';');
   }
 
   files.forEach((element) {

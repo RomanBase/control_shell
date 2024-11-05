@@ -29,6 +29,7 @@ void main(List<String> args) async {
           .buildLib(
             directory: libDirectory(lib),
             provider: true,
+            suffix: '_provider',
           )
           .then((value) => git.addFiles(shell, value)),
     );
@@ -41,6 +42,7 @@ void main(List<String> args) async {
           .buildModuleLibs(
             directory: libDirectory(module),
             provider: true,
+            suffix: '_provider',
           )
           .then((value) => git.addFiles(shell, value)),
     );

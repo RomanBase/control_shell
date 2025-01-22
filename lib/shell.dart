@@ -4,7 +4,7 @@ export 'cmd.dart';
 export 'platform.dart';
 export 'file.dart';
 
-ControlShell root({String? path, List<String> modules = const []}) => ControlShell._(path == null ? Shell() : Shell().cd(path), modules);
+ControlShell root({String? cd, String? dir, List<String> modules = const []}) => ControlShell._(cd == null ? Shell(workingDirectory: dir) : Shell(workingDirectory: dir).cd(cd), modules);
 
 class ControlShell {
   final Shell _shell;

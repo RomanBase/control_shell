@@ -1,8 +1,15 @@
 import 'package:process_run/shell.dart';
 
 export 'cmd.dart';
-export 'platform.dart';
 export 'file.dart';
+export 'platform.dart';
+
+export 'android.dart';
+export 'ios.dart';
+export 'config.dart';
+export 'pubspec.dart';
+
+export 'utils.dart';
 
 ControlShell root({String? cd, String? dir, List<String> modules = const []}) => ControlShell._(cd == null ? Shell(workingDirectory: dir) : Shell(workingDirectory: dir).cd(cd), modules);
 

@@ -20,13 +20,13 @@ Future<void> distributeAppBundle(ControlShell shell, {String track = 'alpha', bo
   final timestamp = DateTime.now();
 
   await buildAppBundle(shell);
-  await uploadAppBundle(shell);
 
   if (dryRun) {
     final serviceAccount = (await LocalConfig.read()).googleService;
     final service = await getGoogleServiceCredentials(serviceAccount!);
     print(service);
   } else {
+    await uploadAppBundle(shell);
     await publish(shell, track: track);
   }
 

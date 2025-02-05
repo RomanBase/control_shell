@@ -22,7 +22,7 @@ Future<void> uploadIpa(ControlShell shell, {String? serviceAccount, String dir =
     throw 'Missing service account credentials';
   }
 
-  final config = await _getConfig(serviceAccount);
+  final config = await getAppleServiceCredentials(serviceAccount);
   final plist = await XmlDocument.parse(await File(path(shell.rootShell().path, [dir, 'DistributionSummary.plist'])).readAsString());
   final name = plist.xpath('plist/dict/key').first.children.first;
 
@@ -41,7 +41,7 @@ Future<void> exportArchive(ControlShell shell) async {
   await shell.module('ios').run('xcodebuild -exportArchive -archivePath ..$_buildDir/archive/Runner.xcarchive -exportPath ..$_buildDir/Runner.ipa -exportOptionsPlist ExportOptions.plist');
 }
 
-Future<AppleServiceCredentials> _getConfig(String serviceAccount) async {
+Future<AppleServiceCredentials> getAppleServiceCredentials(String serviceAccount) async {
   final json = await File.fromUri(Uri.file(serviceAccount)).readAsString();
 
   return AppleServiceCredentials(jsonDecode(json));
@@ -59,4 +59,7 @@ class AppleServiceCredentials {
   String? get appleIssuer => _data['issuer'];
 
   AppleServiceCredentials(this._data);
+
+  @override
+  String toString() => _data.toString();
 }

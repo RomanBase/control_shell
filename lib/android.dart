@@ -22,7 +22,7 @@ Future<void> buildAppBundle(ControlShell shell) async {
 }
 
 Future<Client> _client(String serviceAccount) async => clientViaServiceAccount(
-      ServiceAccountCredentials.fromJson(await File.fromUri(Uri.file(serviceAccount)).readAsString()),
+      await getGoogleServiceCredentials(serviceAccount),
       [AndroidPublisherApi.androidpublisherScope],
     );
 
@@ -90,6 +90,12 @@ Future<Map<String, dynamic>> publish(ControlShell shell, {String? serviceAccount
   print(result.toJson());
 
   return result.toJson();
+}
+
+Future<ServiceAccountCredentials> getGoogleServiceCredentials(String serviceAccount) async {
+  final json = await File.fromUri(Uri.file(serviceAccount)).readAsString();
+
+  return ServiceAccountCredentials.fromJson(json);
 }
 
 Future<String> _packageNameFromArchive(ControlShell shell) async {

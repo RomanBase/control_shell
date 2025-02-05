@@ -14,5 +14,5 @@ void timestampDuration(String msg, DateTime start) {
 
   final ms = microseconds ~/ Duration.microsecondsPerMillisecond;
 
-  print('$msg [${h > 0 ? '${h}h ' : ''}${m > 0 ? '${m}m ' : ''}${s > 0 ? '${s}s ' : ''}$ms]');
+  print('$msg [${h > 0 ? '${h}h ' : ''}${m > 0 ? '${m}m ' : ''}${s > 0 ? '${s}s ' : ''}${ms}ms]');
 }

@@ -1,3 +1,4 @@
+import 'package:control_shell/utils.dart';
 import 'package:process_run/shell.dart';
 
 export 'cmd.dart';
@@ -17,6 +18,8 @@ class ControlShell {
   final Shell _shell;
 
   final List<String> modules;
+
+  String get path => _shell.path;
 
   const ControlShell._(this._shell, this.modules);
 
@@ -57,9 +60,16 @@ class ControlShell {
   Future<void> runAsync(dynamic parent, Future<void> Function() action) async {
     final timestamp = DateTime.now();
     print('CI $parent --- START');
-    await action();
-    final duration = DateTime.now().difference(timestamp);
-    final inSec = duration.inSeconds > 0;
-    print('CI $parent --- END | ${inSec ? duration.inSeconds : duration.inMilliseconds} ${inSec ? 'sec' : 'ms'}');
+
+    dynamic ex;
+    await action().catchError((err) {
+      print(ex = err);
+    });
+
+    timestampDuration('CI $parent --- END', timestamp);
+
+    if (ex != null) {
+      throw 'CI $parent --- ERROR';
+    }
   }
 }

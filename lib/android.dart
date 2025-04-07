@@ -7,8 +7,6 @@ import 'package:googleapis/androidpublisher/v3.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart';
 
-import 'config.dart';
-
 ///
 /// https://developers.google.com/android-publisher
 ///
@@ -16,9 +14,11 @@ import 'config.dart';
 String get _path => path('build', ['app', 'outputs', 'bundle', 'release', 'app-release.aab']);
 
 Future<void> buildAppBundle(ControlShell shell) async {
-  final buildNumber = (await LocalConfig.read()).buildNumber;
+  final config = await LocalConfig.read();
+  final buildNumber = config.buildNumber;
+  final buildName = config.version;
 
-  await shell.run('flutter build appbundle --build-number $buildNumber');
+  await shell.run('flutter build appbundle --build-name $buildName --build-number $buildNumber');
 }
 
 Future<Client> _client(String serviceAccount) async => clientViaServiceAccount(

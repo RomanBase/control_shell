@@ -21,4 +21,9 @@ class Pubspec {
     print('Base Build Number: $build');
     return (await LocalConfig.read()).incrementBuildNumber(build, step);
   }
+
+  Future<String> incrementBuildName({String? override, int major = 0, int minor = 0, int patch = 0}) async {
+    print('Base Build Name: $version');
+    return (await LocalConfig.read()).incrementBuildName(override: override, major: major, minor: minor, patch: patch);
+  }
 }

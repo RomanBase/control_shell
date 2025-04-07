@@ -5,14 +5,14 @@ import 'package:control_shell/shell.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
-import 'config.dart';
-
 const _buildDir = 'build/ios';
 
 Future<void> buildIpa(ControlShell shell) async {
-  final buildNumber = (await LocalConfig.read()).buildNumber;
+  final config = await LocalConfig.read();
+  final buildNumber = config.buildNumber;
+  final buildName = config.version;
 
-  await shell.run('flutter build ipa --build-number $buildNumber');
+  await shell.run('flutter build ipa --build-name $buildName --build-number $buildNumber');
 }
 
 Future<void> uploadIpa(ControlShell shell, {String? serviceAccount, String dir = '$_buildDir/ipa'}) async {

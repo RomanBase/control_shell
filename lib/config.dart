@@ -12,6 +12,10 @@ class LocalConfig {
 
   int get buildNumber => _buildNumber ?? _data['build'] ?? 1;
 
+  String? _version;
+
+  String get version => _version ?? _data['version'] ?? '0.0.1';
+
   String? get appleService => _data['apple'];
 
   String? get googleService => _data['google'];
@@ -44,9 +48,29 @@ class LocalConfig {
     return buildNumber;
   }
 
+  Future<String> incrementBuildName({String? override, int major = 0, int minor = 0, int patch = 0}) async {
+    if (override != null) {
+      _version = version;
+    } else {
+      final parts = version.split('.').map((e) => int.parse(e)).toList();
+      final digits = List.generate(3, (i) => parts.length > i ? parts[i] : 0);
+      digits[0] += major;
+      digits[1] += minor;
+      digits[2] += patch;
+
+      _version = digits.join('.');
+    }
+
+    await _save();
+    print('Next Build Name: $version');
+
+    return version;
+  }
+
   Future<void> _save() async {
     await _file.writeAsString(YamlWriter().write({
       ..._data.value,
+      'version': _version,
       'build': _buildNumber,
     }));
   }

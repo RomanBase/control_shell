@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:control_shell/shell.dart';
 import 'package:yaml/yaml.dart';
 
-import 'config.dart';
-
 Future<Pubspec> pubspec(ControlShell shell) async {
   return Pubspec._(loadYaml(await File(path(shell.rootShell().path, ['pubspec.yaml'])).readAsString()));
 }
@@ -24,6 +22,12 @@ class Pubspec {
 
   Future<String> incrementBuildName({String? override, int major = 0, int minor = 0, int patch = 0}) async {
     print('Base Build Name: $version');
-    return (await LocalConfig.read()).incrementBuildName(override: override, major: major, minor: minor, patch: patch);
+    return (await LocalConfig.read()).incrementBuildName(
+      base: version,
+      override: override,
+      major: major,
+      minor: minor,
+      patch: patch,
+    );
   }
 }

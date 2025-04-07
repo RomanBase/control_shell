@@ -48,10 +48,14 @@ class LocalConfig {
     return buildNumber;
   }
 
-  Future<String> incrementBuildName({String? override, int major = 0, int minor = 0, int patch = 0}) async {
+  Future<String> incrementBuildName({String? base, String? override, int major = 0, int minor = 0, int patch = 0}) async {
     if (override != null) {
       _version = version;
     } else {
+      final versions = [base ?? '0.0.0', version];
+      versions.sort();
+      _version = versions.last;
+
       final parts = version.split('.').map((e) => int.parse(e)).toList();
       final digits = List.generate(3, (i) => parts.length > i ? parts[i] : 0);
       digits[0] += major;
@@ -70,8 +74,8 @@ class LocalConfig {
   Future<void> _save() async {
     await _file.writeAsString(YamlWriter().write({
       ..._data.value,
-      'version': _version,
-      'build': _buildNumber,
+      'version': version,
+      'build': buildNumber,
     }));
   }
 

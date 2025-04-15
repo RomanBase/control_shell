@@ -16,9 +16,11 @@ class LocalConfig {
 
   String get version => _version ?? _data['version'] ?? '0.0.1';
 
-  String? get appleService => _data['apple'];
+  String? get env => _data['env'];
 
-  String? get googleService => _data['google'];
+  String? get appleService => _envPath('apple');
+
+  String? get googleService => _envPath('google');
 
   LocalConfig._(this._data);
 
@@ -30,6 +32,18 @@ class LocalConfig {
     }
 
     return LocalConfig._(YamlMap());
+  }
+
+  String? _envPath(String service) {
+    if (!_data.containsKey(service)) {
+      return null;
+    }
+
+    if (_data.containsKey('env')) {
+      return '$env/${_data[service]}';
+    }
+
+    return _data[service];
   }
 
   Future<int> incrementBuildNumber([int? base, int? step]) async {

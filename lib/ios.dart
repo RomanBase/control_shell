@@ -15,6 +15,22 @@ Future<void> buildIpa(ControlShell shell) async {
   await shell.run('flutter build ipa --build-name $buildName --build-number $buildNumber');
 }
 
+Future<void> buildIOS(ControlShell shell) async {
+  final config = await LocalConfig.read();
+  final buildNumber = config.buildNumber;
+  final buildName = config.version;
+
+  await shell.run('flutter build ios --build-name $buildName --build-number $buildNumber');
+}
+
+Future<void> buildArchive(ControlShell shell) async {
+  await shell.module('ios').run('xcodebuild -sdk iphoneos -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath ..$_buildDir/archive/Runner.xcarchive archive');
+}
+
+Future<void> exportArchive(ControlShell shell) async {
+  await shell.module('ios').run('xcodebuild -exportArchive -archivePath ..$_buildDir/archive/Runner.xcarchive -exportPath ..$_buildDir/Runner.ipa -exportOptionsPlist ExportOptions.plist');
+}
+
 Future<void> uploadIpa(ControlShell shell, {String? serviceAccount, String dir = '$_buildDir/ipa'}) async {
   serviceAccount ??= (await LocalConfig.read()).appleService;
 
@@ -27,18 +43,6 @@ Future<void> uploadIpa(ControlShell shell, {String? serviceAccount, String dir =
   final name = plist.xpath('plist/dict/key').first.children.first;
 
   await shell.run('xcrun altool --upload-app --type ios -f "$dir/$name" ${config.appleKey != null ? '--apiKey ${config.appleKey}' : '-u ${config.appleId}'} ${config.appleIssuer != null ? '--apiIssuer ${config.appleIssuer}' : '-p ${config.applePassword}'}');
-}
-
-Future<void> buildArchive(ControlShell shell) async {
-  await shell.module('ios').run('xcodebuild -sdk iphoneos -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath ..$_buildDir/archive/Runner.xcarchive archive');
-}
-
-Future<void> exportArchiveOptions(ControlShell shell) async {
-  throw ('TODO');
-}
-
-Future<void> exportArchive(ControlShell shell) async {
-  await shell.module('ios').run('xcodebuild -exportArchive -archivePath ..$_buildDir/archive/Runner.xcarchive -exportPath ..$_buildDir/Runner.ipa -exportOptionsPlist ExportOptions.plist');
 }
 
 Future<AppleServiceCredentials> getAppleServiceCredentials(String serviceAccount) async {

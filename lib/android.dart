@@ -112,5 +112,12 @@ Future<String> packageNameFromArchive(ControlShell shell, {String? dir, String a
 
   final xml = await manifestFromArchive(dir, abb: abb, bundletool: bundletool);
 
-  return xml.getElement('manifest')!.getAttribute('package')!;
+  try {
+    final package = xml.getElement('manifest')!.getAttribute('package')!;
+
+    return package;
+  } catch (err) {
+    print(xml);
+    throw err;
+  }
 }

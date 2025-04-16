@@ -24,6 +24,23 @@ class LocalConfig {
 
   LocalConfig._(this._data);
 
+  static Future<bool> check() async {
+    final config = await LocalConfig.read();
+
+    if (config.appleService == null) {
+      throw 'Missing Apple service credentials';
+    }
+
+    if (config.googleService == null) {
+      throw 'Missing Google service credentials';
+    }
+
+    final apple = await File.fromUri(Uri.file(config.appleService!)).readAsString();
+    final google = await File.fromUri(Uri.file(config.googleService!)).readAsString();
+
+    return apple.isNotEmpty && google.isNotEmpty;
+  }
+
   static Future<LocalConfig> read() async {
     if (await _file.exists()) {
       final data = await _file.readAsString();

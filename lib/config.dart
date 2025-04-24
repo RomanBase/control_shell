@@ -10,7 +10,7 @@ class LocalConfig {
 
   int? _buildNumber;
 
-  int get buildNumber => _buildNumber ?? _data['build'] ?? 1;
+  int get buildNumber => (_buildNumber ?? _data['build'] ?? 1) + run;
 
   String? _version;
 
@@ -21,6 +21,8 @@ class LocalConfig {
   String? get appleService => _envPath('apple');
 
   String? get googleService => _envPath('google');
+
+  static int run = 0;
 
   LocalConfig._(this._data);
 

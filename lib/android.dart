@@ -102,6 +102,10 @@ Future<XmlDocument> manifestFromArchive(String dir, {String abb = 'app-release.a
 
   final result = await Process.run('java', ['-jar', bundletool, 'dump', 'manifest', '--bundle=$aabPath']);
 
+  if (result.stderr != null) {
+    print(result.stderr);
+  }
+
   return XmlDocument.parse(result.stdout);
 }
 

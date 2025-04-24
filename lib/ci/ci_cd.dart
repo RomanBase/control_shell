@@ -35,7 +35,10 @@ Future<void> distributeAppBundle(
 }) async {
   final timestamp = DateTime.now();
 
-  await buildAppBundle(shell);
+  await buildAppBundle(
+    shell,
+    args: args.build,
+  );
 
   if (dryRun) {
     final serviceAccount = (await LocalConfig.read()).googleService;
@@ -43,7 +46,11 @@ Future<void> distributeAppBundle(
     print(service);
   } else {
     await uploadAppBundle(shell);
-    await publish(shell, track: track);
+    await publish(
+      shell,
+      track: track,
+      args: args.deploy,
+    );
   }
 
   timestampDuration(

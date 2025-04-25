@@ -8,9 +8,9 @@ File get _file => File.fromUri(Uri.file('local_config.yaml'));
 class LocalConfig {
   final YamlMap _data;
 
-  int? _buildNumber;
+  int? _configNumber;
 
-  int get configNumber => (_buildNumber ?? _data['build'] ?? 1);
+  int get configNumber => (_configNumber ?? _data['build'] ?? 1);
 
   int get buildNumber => configNumber + run;
 
@@ -68,19 +68,19 @@ class LocalConfig {
   }
 
   Future<int> incrementBuildNumber([int? base, int? step]) async {
-    if (base != null && base > buildNumber) {
-      _buildNumber = base;
+    if (base != null && base > configNumber) {
+      _configNumber = base;
     } else {
-      _buildNumber = buildNumber;
+      _configNumber = configNumber;
     }
 
-    _buildNumber = buildNumber + (step ?? 1);
+    _configNumber = configNumber + (step ?? 1);
 
     await _save();
 
-    print('Next Build Number: $buildNumber');
+    print('Next Build Number: $configNumber');
 
-    return buildNumber;
+    return configNumber;
   }
 
   Future<String> incrementBuildName({String? base, String? override, int major = 0, int minor = 0, int patch = 0}) async {

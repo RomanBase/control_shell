@@ -1,27 +1,21 @@
-import 'package:control_shell/ci/ci_args.dart';
 import 'package:control_shell/shell.dart';
 
 Future<void> distributeIpa(
   ControlShell shell, {
   bool dryRun = false,
-  Args args = const Args.empty(),
+  List<String> buildArgs = const [],
+  List<String> deployArgs = const [],
 }) async {
   final timestamp = DateTime.now();
 
-  await buildIpa(
-    shell,
-    args: args.build,
-  );
+  await buildIpa(shell, args: buildArgs);
 
   if (dryRun) {
     final serviceAccount = (await LocalConfig.read()).appleService;
     final service = await getAppleServiceCredentials(serviceAccount!);
     print(service);
   } else {
-    await uploadIpa(
-      shell,
-      args: args.deploy,
-    );
+    await uploadIpa(shell, args: deployArgs);
   }
 
   timestampDuration('iOS Build Ready | ${shell.rootShell().path}', timestamp);
@@ -31,14 +25,11 @@ Future<void> distributeAppBundle(
   ControlShell shell, {
   String track = 'alpha',
   bool dryRun = false,
-  Args args = const Args.empty(),
+  List<String> buildArgs = const [],
 }) async {
   final timestamp = DateTime.now();
 
-  await buildAppBundle(
-    shell,
-    args: args.build,
-  );
+  await buildAppBundle(shell, args: buildArgs);
 
   if (dryRun) {
     final serviceAccount = (await LocalConfig.read()).googleService;
@@ -46,13 +37,8 @@ Future<void> distributeAppBundle(
     print(service);
   } else {
     await uploadAppBundle(shell);
-    await publish(
-      shell,
-      track: track,
-      args: args.deploy,
-    );
+    await publish(shell, track: track);
   }
 
-  timestampDuration(
-      'Android Build Ready | ${shell.rootShell().path}', timestamp);
+  timestampDuration('Android Build Ready | ${shell.rootShell().path}', timestamp);
 }

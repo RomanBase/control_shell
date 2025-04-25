@@ -9,14 +9,13 @@ const _buildDir = 'build/ios';
 
 Future<void> buildIpa(
   ControlShell shell, {
-  Map<String, String> args = const <String, String>{},
+  List<String> args = const [],
 }) async {
   final config = await LocalConfig.read();
   final buildNumber = config.buildNumber;
   final buildName = config.version;
 
-  final cmd =
-      'flutter build ipa --build-name $buildName --build-number $buildNumber ${args.isNotEmpty ? args.entries.map((e) => '--${e.key} ${e.value}').join(' ') : ''}';
+  final cmd = 'flutter build ipa --build-name $buildName --build-number $buildNumber ${args.join(' ')}';
   await shell.run(cmd);
 }
 
@@ -25,25 +24,22 @@ Future<void> buildIOS(ControlShell shell) async {
   final buildNumber = config.buildNumber;
   final buildName = config.version;
 
-  await shell.run(
-      'flutter build ios --build-name $buildName --build-number $buildNumber');
+  await shell.run('flutter build ios --build-name $buildName --build-number $buildNumber');
 }
 
 Future<void> buildArchive(ControlShell shell) async {
-  await shell.module('ios').run(
-      'xcodebuild -sdk iphoneos -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath ..$_buildDir/archive/Runner.xcarchive archive');
+  await shell.module('ios').run('xcodebuild -sdk iphoneos -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath ..$_buildDir/archive/Runner.xcarchive archive');
 }
 
 Future<void> exportArchive(ControlShell shell) async {
-  await shell.module('ios').run(
-      'xcodebuild -exportArchive -archivePath ..$_buildDir/archive/Runner.xcarchive -exportPath ..$_buildDir/Runner.ipa -exportOptionsPlist ExportOptions.plist');
+  await shell.module('ios').run('xcodebuild -exportArchive -archivePath ..$_buildDir/archive/Runner.xcarchive -exportPath ..$_buildDir/Runner.ipa -exportOptionsPlist ExportOptions.plist');
 }
 
 Future<void> uploadIpa(
   ControlShell shell, {
   String? serviceAccount,
   String dir = '$_buildDir/ipa',
-  Map<String, String> args = const <String, String>{},
+  List<String> args = const [],
 }) async {
   serviceAccount ??= (await LocalConfig.read()).appleService;
 
@@ -52,18 +48,14 @@ Future<void> uploadIpa(
   }
 
   final config = await getAppleServiceCredentials(serviceAccount);
-  final plist = await XmlDocument.parse(await File(
-          path(shell.rootShell().path, [dir, 'DistributionSummary.plist']))
-      .readAsString());
+  final plist = await XmlDocument.parse(await File(path(shell.rootShell().path, [dir, 'DistributionSummary.plist'])).readAsString());
   final name = plist.xpath('plist/dict/key').first.children.first;
 
-  final cmd =
-      'xcrun altool --upload-app --type ios -f "$dir/$name" ${config.appleKey != null ? '--apiKey ${config.appleKey}' : '-u ${config.appleId}'} ${config.appleIssuer != null ? '--apiIssuer ${config.appleIssuer}' : '-p ${config.applePassword}'} ${args.isNotEmpty ? args.entries.map((e) => '--${e.key} ${e.value}').join(' ') : ''}';
+  final cmd = 'xcrun altool --upload-app --type ios -f "$dir/$name" ${config.appleKey != null ? '--apiKey ${config.appleKey}' : '-u ${config.appleId}'} ${config.appleIssuer != null ? '--apiIssuer ${config.appleIssuer}' : '-p ${config.applePassword}'} ${args.join(' ')}';
   await shell.run(cmd);
 }
 
-Future<AppleServiceCredentials> getAppleServiceCredentials(
-    String serviceAccount) async {
+Future<AppleServiceCredentials> getAppleServiceCredentials(String serviceAccount) async {
   final json = await File.fromUri(Uri.file(serviceAccount)).readAsString();
 
   return AppleServiceCredentials(jsonDecode(json));

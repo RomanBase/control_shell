@@ -10,7 +10,9 @@ class LocalConfig {
 
   int? _buildNumber;
 
-  int get buildNumber => (_buildNumber ?? _data['build'] ?? 1) + run;
+  int get configNumber => (_buildNumber ?? _data['build'] ?? 1);
+
+  int get buildNumber => configNumber + run;
 
   String? _version;
 
@@ -108,7 +110,7 @@ class LocalConfig {
     await _file.writeAsString(YamlWriter().write({
       ..._data.value,
       'version': version,
-      'build': buildNumber,
+      'build': configNumber,
     }));
   }
 

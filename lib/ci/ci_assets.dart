@@ -36,7 +36,7 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
 
       export.writeln('  static const ${cName} = _${cName}._();');
 
-      if (excludeContent.contains(dir.name)) {
+      if (!excludeContent.contains(dir.name)) {
         export.writeln(assets);
       }
     }

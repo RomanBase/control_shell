@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:control_shell/shell.dart';
 
-Future<File> buildAssets({String folder = 'assets', String? dir, String name = 'res', List<String> exclude = const []}) async {
+Future<File> buildAssets({String folder = 'assets', String? dir, String name = 'res', List<String> exclude = const [], List<String> excludeContent = const []}) async {
   final root = projectLib();
   final res = Directory(path(root.path, [dir ?? name]));
 
@@ -35,7 +35,10 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
       assetsExport.writeln();
 
       export.writeln('  static const ${cName} = _${cName}._();');
-      export.writeln(assets);
+
+      if (excludeContent.contains(dir.name)) {
+        export.writeln(assets);
+      }
     }
 
     print('build assets: ${dir.path} - ${files.length}');

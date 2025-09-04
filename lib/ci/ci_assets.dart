@@ -17,7 +17,7 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
 
   int count = 0;
   for (final dir in dirs) {
-    if (exclude.contains(dir.name)) {
+    if (exclude.contains(dir.name) || dir.name.startsWith('.') || dir.name.startsWith('_')) {
       continue;
     }
 
@@ -25,17 +25,17 @@ Future<File> buildAssets({String folder = 'assets', String? dir, String name = '
     final assets = buildAssetList(files, dir, assetRoot.parent);
 
     if (assets.isNotEmpty) {
+      final cName = propertyName(dir.name);
       count++;
-      assetsExport.writeln('class _${dir.name} {');
-      assetsExport.writeln('  const _${dir.name}._();');
+      assetsExport.writeln('class _${cName} {');
+      assetsExport.writeln('  const _${cName}._();');
       assetsExport.writeln();
       assetsExport.writeln('  String operator [](String value) => \'${folder}/${dir.name}/\${value}\';');
-      assetsExport.writeln();
-      assetsExport.write(assets);
       assetsExport.writeln('}');
       assetsExport.writeln();
 
-      export.writeln('  static const ${dir.name} = _${dir.name}._();');
+      export.writeln('  static const ${cName} = _${cName}._();');
+      export.writeln(assets);
     }
 
     print('build assets: ${dir.path} - ${files.length}');
@@ -58,7 +58,11 @@ String buildAssetList(List<File> files, Directory parent, [Directory? relative])
   final buffer = StringBuffer();
   final offset = (relative?.path.length ?? -1) + 1;
 
-  files.forEach((element) {
+  for (final element in files) {
+    if (element.name.startsWith('.') || element.name.startsWith('_')) {
+      continue;
+    }
+
     final relativePath = element.relativePath(offset);
     final file = element.path.substring(parent.path.length + 1);
     String prefix = '';
@@ -68,8 +72,8 @@ String buildAssetList(List<File> files, Directory parent, [Directory? relative])
       prefix = '${split.join('_')}_';
     }
 
-    buffer.writeln('  final $prefix${propertyName(element.name)} = \'${relativePath}\';');
-  });
+    buffer.writeln('  static const ${propertyName(parent.name)}_$prefix${element.name} = \'${relativePath}\';');
+  }
 
   return buffer.toString();
 }

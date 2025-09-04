@@ -72,13 +72,17 @@ String buildAssetList(List<File> files, Directory parent, [Directory? relative])
       prefix = '${split.join('_')}_';
     }
 
-    buffer.writeln('  static const ${propertyName(parent.name)}_$prefix${element.name} = \'${relativePath}\';');
+    buffer.writeln('  static const ${propertyName(parent.name)}_$prefix${elementName(element.name)} = \'${relativePath}\';');
   }
 
   return buffer.toString();
 }
 
+String elementName(String value) => value.replaceAll(RegExp(r'[-#/\*+!@#$%^&()=,.]'), '_');
+
 String propertyName(String value) {
+  value = elementName(value);
+
   if (value.isNumeric) {
     return 'n_${value}';
   }

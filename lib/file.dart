@@ -96,7 +96,15 @@ extension DirectoryExtension on Directory {
 }
 
 extension FileExtension on File {
-  String get name => this.path.substring(this.path.lastIndexOf(slash) + 1).split('.').first;
+  String get name {
+    final parts = this.path.substring(this.path.lastIndexOf(slash) + 1).split('.');
+
+    if (parts.length < 3) {
+      return parts[0];
+    }
+
+    return parts.sublist(0, parts.length - 1).join('.');
+  }
 
   String relativePath(int offset) => this.path.substring(offset).replaceAll('\\', '\/');
 }

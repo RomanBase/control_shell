@@ -1,10 +1,10 @@
-//Generated file: 2025-09-04 10:46:29.285028
+//Generated file: 2025-09-04 12:58:48.069577
 class Res {
   static const images = _images._();
   static const images_01 = 'assets/images/01.png';
   static const images_images_sub_core = 'assets/images/images_sub/core.png';
   static const images_images_sub_monolith = 'assets/images/images_sub/monolith.png';
-  static const images_super = 'assets/images/super.png';
+  static const images_s_u_p_e__r = 'assets/images/s+u,p-e#.r.png';
 
   static const n_1 = _n_1._();
   static const n_1_01 = 'assets/1/01.png';
